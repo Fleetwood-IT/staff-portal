@@ -35,18 +35,28 @@ $('ab').onclick=async()=>{const name=$('an').value.trim();if(!name)return flash(
 
 /* ---------- Payroll ---------- */
 async function loadPay(){const p=$('period').value.trim();if(!p)return;const{data}=await sb.from('payslips').select('*').eq('period',p);pay={};(data||[]).forEach(r=>pay[r.staff_id]=r);
- $('pt').innerHTML=staff.filter(s=>s.active).map(s=>{const r=pay[s.id]||{};return`<tr data-id="${s.id}"><td>${esc(s.name)}</td>${K.map(k=>`<td><input type="number" min="0" step="any" data-k="${k}" value="${num(r[k])}"></td>`).join('')}<td class="net">${ft(net(r))}</td><td>${r.published?'Published':r.id?'Draft':''}</td></tr>`}).join('')}
-$('pt').oninput=e=>{const tr=e.target.closest('tr'),r={};tr.querySelectorAll('input').forEach(i=>r[i.dataset.k]=num(i.value));tr.querySelector('.net').textContent=ft(net(r))};
+ $('pt').innerHTML=staff.filter(s=>s.active).map(s=>{const r=pay[s.id]||{};
+  const st=r.id?`<label style="display:flex;gap:6px;align-items:center;margin:0;color:inherit;font-size:13px"><input type="checkbox" data-pub="${r.id}"${r.published?' checked':''}><span class="pl">${r.published?'Published':'Draft'}</span></label>`:'<span class="note">Not saved</span>';
+  return`<tr data-id="${s.id}"><td>${esc(s.name)}</td>${K.map(k=>`<td><input type="number" min="0" step="any" data-k="${k}" value="${num(r[k])}"></td>`).join('')}<td class="net">${ft(net(r))}</td><td>${st}</td></tr>`}).join('')}
+$('pt').oninput=e=>{if(!e.target.dataset.k)return;const tr=e.target.closest('tr'),r={};tr.querySelectorAll('input[data-k]').forEach(i=>r[i.dataset.k]=num(i.value));tr.querySelector('.net').textContent=ft(net(r))};
+/* Tick or untick one person's payslip to publish or hide it */
+$('pt').onchange=async e=>{const id=e.target.dataset.pub;if(!id)return;
+ const v=e.target.checked,tr=e.target.closest('tr');
+ const{error}=await sb.from('payslips').update({published:v}).eq('id',id);
+ if(error){e.target.checked=!v;return flash(error.message)}
+ const r=pay[tr.dataset.id];if(r)r.published=v;
+ tr.querySelector('.pl').textContent=v?'Published':'Draft';
+ flash(v?'Published to this staff member.':'Hidden from this staff member.')};
 $('ld').onclick=loadPay;
 $('period').onchange=loadPay;
 $('sv').onclick=async()=>{const period=$('period').value.trim(),out=[];
  if(!period)return flash('Enter the pay period first.');
- $('pt').querySelectorAll('tr').forEach(tr=>{const o={staff_id:tr.dataset.id,period};let any=!!pay[o.staff_id];tr.querySelectorAll('input').forEach(i=>{o[i.dataset.k]=num(i.value);if(num(i.value))any=true});if(any)out.push(o)});
+ $('pt').querySelectorAll('tr').forEach(tr=>{const o={staff_id:tr.dataset.id,period};let any=!!pay[o.staff_id];tr.querySelectorAll('input[data-k]').forEach(i=>{o[i.dataset.k]=num(i.value);if(num(i.value))any=true});if(any)out.push(o)});
  if(!out.length)return flash('Nothing to save.');
- const{error}=await sb.from('payslips').upsert(out,{onConflict:'staff_id,period'});flash(error?error.message:'Saved as draft. Press Publish when ready.');loadPay()};
-const setPub=async v=>{const{error}=await sb.from('payslips').update({published:v}).eq('period',$('period').value.trim());flash(error?error.message:v?'Published to staff.':'Unpublished.');loadPay()};
-$('pub').onclick=()=>confirm('Publish all saved payslips for this period to staff?')&&setPub(true);
-$('unp').onclick=()=>setPub(false);
+ const{error}=await sb.from('payslips').upsert(out,{onConflict:'staff_id,period'});flash(error?error.message:'Saved as draft. Tick Publish beside a name, or press Publish for everyone.');loadPay()};
+const setPub=async v=>{const{error}=await sb.from('payslips').update({published:v}).eq('period',$('period').value.trim());flash(error?error.message:v?'Published to all staff for this period.':'Unpublished for all staff.');loadPay()};
+$('pub').onclick=()=>confirm('Publish ALL saved payslips for this period to staff?')&&setPub(true);
+$('unp').onclick=()=>confirm('Hide ALL payslips for this period from staff?')&&setPub(false);
 
 /* ---------- Complaints ---------- */
 const dt=d=>new Date(d).toLocaleDateString('en-GB');
