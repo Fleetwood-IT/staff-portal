@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#102b31">
   <meta name="description" content="Fleetwood Lending Limited payroll administration portal">
   <title>Payroll Administration | Fleetwood Lending Limited</title>
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 
@@ -178,6 +178,31 @@
           </button>
         </div>
 
+        <h3>Names for the two "Other" payment lines</h3>
+
+        <div class="row">
+          <input
+            id="lb1"
+            type="text"
+            maxlength="40"
+            placeholder="Other 1 name, e.g. Transport allowance"
+            aria-label="Name for Other 1"
+          >
+
+          <input
+            id="lb2"
+            type="text"
+            maxlength="40"
+            placeholder="Other 2 name, e.g. Overtime"
+            aria-label="Name for Other 2"
+          >
+        </div>
+
+        <p class="note">
+          These names appear on every payslip in this period. Leave a box
+          empty to show "Other payment". Press Save draft to store them.
+        </p>
+
         <p class="note">
           Payslips stay hidden from staff until published. The period text
           appears on the payslip, for example "August 2026 2nd Semester".
@@ -236,8 +261,8 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="common.js?v=2"></script>
-  <script src="admin.js?v=2"></script>
+  <script src="common.js?v=3"></script>
+  <script src="admin.js?v=3"></script>
 
 </body>
 </html>

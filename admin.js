@@ -225,6 +225,9 @@ async function loadPay() {
   pay = {};
   (data || []).forEach(r => pay[r.staff_id] = r);
 
+  $('lb1').value = (data || []).map(r => r.other1_label).find(Boolean) || '';
+  $('lb2').value = (data || []).map(r => r.other2_label).find(Boolean) || '';
+
   $('pt').innerHTML = staff.filter(s => s.active).map(s => {
     const r = pay[s.id] || {};
 
@@ -304,7 +307,9 @@ $('sv').onclick = async () => {
   $('pt').querySelectorAll('tr').forEach(tr => {
     const o = {
       staff_id: tr.dataset.id,
-      period
+      period,
+      other1_label: $('lb1').value.trim() || null,
+      other2_label: $('lb2').value.trim() || null
     };
 
     let any = !!pay[o.staff_id];

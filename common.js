@@ -7,7 +7,8 @@ const f=n=>num(n)?num(n).toLocaleString('en-NG'):'',ft=n=>num(n).toLocaleString(
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function slip(s,p){
  const tp=num(p.gross)+num(p.bonus)+num(p.other1)+num(p.other2),td=num(p.tax)+num(p.pension)+num(p.fines);
- const R=[['Gross:',p.gross,'Tax:',p.tax],['Bonus:',p.bonus,'Pension:',p.pension],['Other payment:',p.other1,'Fines:',p.fines],['Other payment:',p.other2,'','']];
+ const L1=esc((p.other1_label||'').trim()||'Other payment')+':',L2=esc((p.other2_label||'').trim()||'Other payment')+':';
+ const R=[['Gross:',p.gross,'Tax:',p.tax],['Bonus:',p.bonus,'Pension:',p.pension],[L1,p.other1,'Fines:',p.fines],[L2,p.other2,'','']];
  return `<div class="ps"><div class="hd"><div class="lg"><img src="logo.png" alt="Fleetwood Lending"></div><div class="co">FLEETWOOD LENDING LIMITED</div></div>
 <div class="pr">Payslip For the Month of ${esc(p.period)}</div>
 <table><tr><td><b>Employee Name:</b></td><td>${esc(s.name)}</td><td><b>Paid Days:</b></td><td class="r">${esc(p.paid_days)}</td></tr><tr><td><b>Gender:</b></td><td>${esc(s.gender)}</td><td></td><td></td></tr></table>

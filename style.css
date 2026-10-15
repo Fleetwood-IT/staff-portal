@@ -1219,3 +1219,10 @@ nav.row [data-t].on {
     flex: 1 1 auto;
   }
 }
+
+/* Names for the two "Other" payment lines */
+#lb1,
+#lb2 {
+  flex: 1 1 240px;
+  min-width: 160px;
+}
