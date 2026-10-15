@@ -1180,31 +1180,8 @@ nav.row [data-t].on {
   white-space: nowrap;
 }
 
-/* Phones: payslip shrinks to fit the screen instead of scrolling sideways.
-   Screen only, so printing is unchanged. */
+/* Phones: small header mark and full-width toolbar buttons (payslip untouched) */
 @media screen and (max-width: 600px) {
-  .pv {
-    padding: 4px;
-  }
-
-  .ps {
-    min-width: 0;
-    font-size: 12px;
-  }
-
-  .lg {
-    width: 100px;
-  }
-
-  .co {
-    font-size: 12px;
-  }
-
-  .ps td,
-  .ps th {
-    padding: 3px 4px;
-  }
-
   .brand-mark {
     width: 38px;
     height: 38px;
