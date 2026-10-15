@@ -1,22 +1,160 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fleetwood Staff Payslips</title><link rel="stylesheet" href="style.css"></head><body>
-<div class="top">Fleetwood Lending Limited<small>Staff payslip portal</small></div>
-<main class="wrap">
-<section id="auth" class="card narrow"><h2>Sign in</h2>
-<label for="em">Email</label><input id="em" type="email" autocomplete="email">
-<label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password">
-<div class="row"><button class="btn p" id="in">Sign in</button></div>
-<div class="row"><button class="btn" id="up">First time? Set my password</button><button class="btn" id="fg">Forgot password</button></div>
-<p id="msg" class="note" aria-live="polite"></p></section>
-<section id="rec" class="card narrow hidden"><h2>Choose a new password</h2><input id="np" type="password" autocomplete="new-password" aria-label="New password"><div class="row"><button class="btn p" id="sv">Save password</button></div><p id="msg2" class="note"></p></section>
-<section id="me" class="hidden"><div class="row"><select id="per" aria-label="Pay period"></select><button class="btn p" id="pr">Print / save as PDF</button><button class="btn" id="out">Sign out</button></div>
-<div class="card pv"><div id="slip"></div><p id="none" class="note"></p></div>
-<div class="card hidden" id="cp"><h2>Report a problem</h2>
-<p class="note">Something wrong with a payslip? Tell payroll here. You can keep chatting below until it is sorted, then close it.</p>
-<label for="cper">About</label><select id="cper"></select>
-<label for="cmsg">Your message</label><textarea id="cmsg" rows="4" maxlength="1000"></textarea>
-<div class="row"><button class="btn p" id="cs">Send</button><span id="cm" class="note" aria-live="polite"></span></div>
-<h3>Your conversations</h3><div id="cl"></div></div>
-</section>
-</main><div id="printarea"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script src="common.js"></script><script src="staff.js"></script></body></html>
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="theme-color" content="#102b35">
+  <meta name="description" content="Fleetwood Lending Limited staff payroll and payslip portal.">
+
+  <title>Fleetwood Lending Limited | Staff Portal</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="top">
+    <div class="top-inner">
+      <div class="brand-mark" aria-hidden="true">F</div>
+      <div class="brand-copy">
+        <strong>Fleetwood Lending Limited</strong>
+        <small>Staff payslip portal</small>
+      </div>
+    </div>
+  </div>
+
+  <main class="wrap">
+
+    <!-- Staff sign-in -->
+    <section id="auth" class="card narrow">
+      <div class="section-kicker">STAFF ACCESS</div>
+
+      <h2>Welcome back</h2>
+      <p class="note">Sign in to access your payslips and payroll conversations.</p>
+
+      <label for="em">Email</label>
+      <input
+        id="em"
+        type="email"
+        autocomplete="email"
+        placeholder="Enter your email address"
+      >
+
+      <label for="pw">Password</label>
+      <input
+        id="pw"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Enter your password"
+      >
+
+      <div class="row">
+        <button class="btn p" id="in" type="button">Sign in</button>
+      </div>
+
+      <div class="row auth-actions">
+        <button class="btn" id="up" type="button">First time? Set my password</button>
+        <button class="btn" id="fg" type="button">Forgot password?</button>
+      </div>
+
+      <p id="msg" class="note" aria-live="polite"></p>
+    </section>
+
+    <!-- Password recovery -->
+    <section id="rec" class="card narrow hidden">
+      <div class="section-kicker">ACCOUNT SECURITY</div>
+
+      <h2>Choose a new password</h2>
+      <p class="note">Enter a new password for your account.</p>
+
+      <label for="np">New password</label>
+      <input
+        id="np"
+        type="password"
+        autocomplete="new-password"
+        aria-label="New password"
+        placeholder="Enter your new password"
+      >
+
+      <div class="row">
+        <button class="btn p" id="sv" type="button">Save password</button>
+      </div>
+
+      <p id="msg2" class="note" aria-live="polite"></p>
+    </section>
+
+    <!-- Staff dashboard -->
+    <section id="me" class="hidden">
+
+      <div class="portal-heading">
+        <div>
+          <div class="section-kicker">YOUR PAYROLL</div>
+          <h2>Staff dashboard</h2>
+          <p class="note">View your payslips and contact payroll when you need assistance.</p>
+        </div>
+      </div>
+
+      <div class="card portal-toolbar">
+        <div class="toolbar-label">
+          <label for="per">Pay period</label>
+          <select id="per" aria-label="Pay period"></select>
+        </div>
+
+        <div class="row toolbar-actions">
+          <button class="btn p" id="pr" type="button">Print / save as PDF</button>
+          <button class="btn" id="out" type="button">Sign out</button>
+        </div>
+      </div>
+
+      <!-- Payslip content is intentionally unchanged -->
+      <div class="card pv">
+        <div id="slip"></div>
+        <p id="none" class="note" aria-live="polite"></p>
+      </div>
+
+      <!-- Complaints and conversations -->
+      <div class="card hidden" id="cp">
+        <div class="section-kicker">PAYROLL SUPPORT</div>
+
+        <h2>Report a problem</h2>
+
+        <p class="note">
+          Something wrong with a payslip? Tell payroll here.
+          You can keep chatting below until it is sorted, then close it.
+        </p>
+
+        <label for="cper">About</label>
+        <select id="cper"></select>
+
+        <label for="cmsg">Your message</label>
+        <textarea
+          id="cmsg"
+          rows="4"
+          maxlength="1000"
+          placeholder="Describe the issue you need help with..."
+        ></textarea>
+
+        <div class="row">
+          <button class="btn p" id="cs" type="button">Send</button>
+          <span id="cm" class="note" aria-live="polite"></span>
+        </div>
+
+        <div class="conversation-heading">
+          <h3>Your conversations</h3>
+          <p class="note">Follow replies and updates from payroll here.</p>
+        </div>
+
+        <div id="cl"></div>
+      </div>
+
+    </section>
+  </main>
+
+  <div id="printarea"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="common.js"></script>
+  <script src="staff.js"></script>
+</body>
+</html>

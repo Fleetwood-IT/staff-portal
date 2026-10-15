@@ -1,23 +1,243 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fleetwood Payroll Admin</title><link rel="stylesheet" href="style.css"></head><body>
-<div class="top">Fleetwood Lending Limited<small>Payroll administration</small></div>
-<main class="wrap">
-<section id="auth" class="card narrow"><h2>Administrator sign in</h2>
-<label for="em">Email</label><input id="em" type="email"><label for="pw">Password</label><input id="pw" type="password">
-<div class="row"><button class="btn p" id="in">Sign in</button></div><p id="msg" class="note" aria-live="polite"></p></section>
-<section id="app" class="hidden">
-<div class="row"><button class="btn p" data-t="s">Staff</button><button class="btn p" data-t="p">Payroll</button><button class="btn p" data-t="c" id="tc">Complaints</button><button class="btn" id="out">Sign out</button><span id="fl" class="note" aria-live="polite"></span></div>
-<div id="tab-s" class="card"><h2>Staff</h2>
-<div class="row"><input id="an" placeholder="Full name" aria-label="Full name"><select id="ag" aria-label="Gender"><option value="">Gender</option><option>MALE</option><option>FEMALE</option></select><input id="ae" type="email" placeholder="Personal email" aria-label="Email"><button class="btn p" id="ab">Add staff</button></div>
-<p class="note">Changes save automatically. Untick Active when someone leaves: they lose access at once.</p>
-<div class="tw"><table class="tbl"><thead><tr><th>ID</th><th>Name</th><th>Gender</th><th>Email</th><th>Active</th></tr></thead><tbody id="st"></tbody></table></div></div>
-<div id="tab-p" class="card hidden"><h2>Monthly payroll</h2>
-<div class="row"><input id="period" value="October 2026 1st Semester" aria-label="Pay period" style="width:280px"><button class="btn" id="ld">Load</button><button class="btn" id="sv">Save draft</button><button class="btn p" id="pub">Publish</button><button class="btn" id="unp">Unpublish</button></div>
-<p class="note">Payslips stay hidden from staff until you press Publish. The period text appears on the payslip, e.g. "August 2026 2nd Semester". Changing the period text loads that period automatically.</p>
-<div class="tw"><table class="tbl"><thead><tr><th>Name</th><th>Paid days</th><th>Gross</th><th>Bonus</th><th>Other 1</th><th>Other 2</th><th>Tax</th><th>Pension</th><th>Fines</th><th>Payable</th><th>Status</th></tr></thead><tbody id="pt"></tbody></table></div></div>
-<div id="tab-c" class="card hidden"><h2>Complaints</h2>
-<div class="row"><select id="cf" aria-label="Filter"><option value="all">All</option><option value="needs">Needs reply</option><option value="resolved">Awaiting staff feedback</option><option value="closed">Closed</option></select><button class="btn" id="cr">Refresh</button></div>
-<p class="note">Reply to keep the conversation going. Press Mark resolved when you think it is dealt with: the staff member then says whether they are satisfied, which closes it. You can reopen a closed complaint.</p>
-<div id="ct"></div></div>
-</section></main>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script src="common.js"></script><script src="admin.js"></script></body></html>
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102b31">
+  <meta name="description" content="Fleetwood Lending Limited payroll administration portal">
+  <title>Payroll Administration | Fleetwood Lending Limited</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="top">
+    Fleetwood Lending Limited
+    <small>PAYROLL ADMINISTRATION · SECURE MANAGEMENT PORTAL</small>
+  </header>
+
+  <main class="wrap">
+
+    <!-- Administrator sign-in -->
+    <section id="auth" class="card narrow">
+      <h2>Administrator sign in</h2>
+
+      <p class="note">
+        Welcome back. Sign in to manage staff, payroll and complaints.
+      </p>
+
+      <label for="em">Email address</label>
+      <input
+        id="em"
+        type="email"
+        autocomplete="username"
+        placeholder="Enter your administrator email"
+        required
+      >
+
+      <label for="pw">Password</label>
+      <input
+        id="pw"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Enter your password"
+        required
+      >
+
+      <div class="row">
+        <button class="btn p" id="in" type="button">
+          Sign in to dashboard
+        </button>
+      </div>
+
+      <p id="msg" class="note" aria-live="polite"></p>
+    </section>
+
+    <!-- Administrator application -->
+    <section id="app" class="hidden">
+
+      <div class="card">
+        <h2>Administrator workspace</h2>
+        <p class="note">
+          Manage employee records, prepare monthly payroll and respond
+          to staff complaints from one place.
+        </p>
+
+        <nav class="row" aria-label="Administration navigation">
+          <button class="btn p" type="button" data-t="s">
+            Staff management
+          </button>
+
+          <button class="btn p" type="button" data-t="p">
+            Payroll
+          </button>
+
+          <button class="btn p" type="button" data-t="c" id="tc">
+            Complaints
+          </button>
+
+          <button class="btn" type="button" id="out">
+            Sign out
+          </button>
+
+          <span id="fl" class="note" role="status" aria-live="polite"></span>
+        </nav>
+      </div>
+
+      <!-- Staff management -->
+      <section id="tab-s" class="card">
+        <h2>Staff management</h2>
+
+        <p class="note">
+          Add employees, update staff information and manage account access.
+        </p>
+
+        <h3>Add a new staff member</h3>
+
+        <div class="row">
+          <input
+            id="an"
+            type="text"
+            placeholder="Full name"
+            aria-label="Full name"
+          >
+
+          <select id="ag" aria-label="Gender">
+            <option value="">Select gender</option>
+            <option value="MALE">MALE</option>
+            <option value="FEMALE">FEMALE</option>
+          </select>
+
+          <input
+            id="ae"
+            type="email"
+            placeholder="Personal email"
+            aria-label="Personal email"
+          >
+
+          <button class="btn p" id="ab" type="button">
+            + Add staff
+          </button>
+        </div>
+
+        <p class="note">
+          Changes save automatically. Untick Active when someone leaves:
+          they lose access at once.
+        </p>
+
+        <h3>Employee directory</h3>
+
+        <div class="tw">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th scope="col">Staff ID</th>
+                <th scope="col">Full name</th>
+                <th scope="col">Gender</th>
+                <th scope="col">Email address</th>
+                <th scope="col">Active</th>
+              </tr>
+            </thead>
+            <tbody id="st"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Payroll -->
+      <section id="tab-p" class="card hidden">
+        <h2>Monthly payroll</h2>
+
+        <p class="note">
+          Prepare salary records, save drafts and control when payslips
+          become available to staff.
+        </p>
+
+        <h3>Payroll period</h3>
+
+        <div class="row">
+          <input
+            id="period"
+            value="October 2026 1st Semester"
+            aria-label="Pay period"
+          >
+
+          <button class="btn" id="ld" type="button">
+            Load period
+          </button>
+
+          <button class="btn" id="sv" type="button">
+            Save draft
+          </button>
+
+          <button class="btn p" id="pub" type="button">
+            Publish all
+          </button>
+
+          <button class="btn" id="unp" type="button">
+            Unpublish all
+          </button>
+        </div>
+
+        <p class="note">
+          Payslips stay hidden from staff until published. The period text
+          appears on the payslip, for example "August 2026 2nd Semester".
+          Changing the period text loads that period automatically.
+        </p>
+
+        <div class="tw">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th scope="col">Employee</th>
+                <th scope="col">Paid days</th>
+                <th scope="col">Gross</th>
+                <th scope="col">Bonus</th>
+                <th scope="col">Other 1</th>
+                <th scope="col">Other 2</th>
+                <th scope="col">Tax</th>
+                <th scope="col">Pension</th>
+                <th scope="col">Fines</th>
+                <th scope="col">Payable</th>
+                <th scope="col">Publication status</th>
+              </tr>
+            </thead>
+            <tbody id="pt"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Complaints -->
+      <section id="tab-c" class="card hidden">
+        <h2>Staff complaints and conversations</h2>
+
+        <p class="note">
+          Review staff concerns, respond to messages and track resolutions.
+          Staff can confirm whether a complaint has been resolved or ask
+          for further assistance.
+        </p>
+
+        <div class="row">
+          <select id="cf" aria-label="Filter complaints">
+            <option value="all">All complaints</option>
+            <option value="needs">Needs reply</option>
+            <option value="resolved">Awaiting staff feedback</option>
+            <option value="closed">Closed complaints</option>
+          </select>
+
+          <button class="btn" id="cr" type="button">
+            Refresh complaints
+          </button>
+        </div>
+
+        <div id="ct"></div>
+      </section>
+
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="common.js"></script>
+  <script src="admin.js"></script>
+
+</body>
+</html>
