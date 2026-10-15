@@ -9,6 +9,7 @@ const net = r =>
 
 const flash = t => {
   $('fl').textContent = t;
+  if ($('fl2')) $('fl2').textContent = t;
 };
 
 const show = id => {
@@ -321,6 +322,17 @@ $('sv').onclick = async () => {
 
     if (any) out.push(o);
   });
+
+  /* Only names typed and no amounts yet: save a draft row for each person
+     so the names are stored with this period. */
+  if (!out.length && ($('lb1').value.trim() || $('lb2').value.trim())) {
+    $('pt').querySelectorAll('tr').forEach(tr => out.push({
+      staff_id: tr.dataset.id,
+      period,
+      other1_label: $('lb1').value.trim() || null,
+      other2_label: $('lb2').value.trim() || null
+    }));
+  }
 
   if (!out.length) return flash('Nothing to save.');
 

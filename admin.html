@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#102b31">
   <meta name="description" content="Fleetwood Lending Limited payroll administration portal">
   <title>Payroll Administration | Fleetwood Lending Limited</title>
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
 
@@ -176,31 +176,14 @@
           <button class="btn" id="unp" type="button">
             Unpublish all
           </button>
-        </div>
 
-        <h3>Names for the two "Other" payment lines</h3>
-
-        <div class="row">
-          <input
-            id="lb1"
-            type="text"
-            maxlength="40"
-            placeholder="Other 1 name, e.g. Transport allowance"
-            aria-label="Name for Other 1"
-          >
-
-          <input
-            id="lb2"
-            type="text"
-            maxlength="40"
-            placeholder="Other 2 name, e.g. Overtime"
-            aria-label="Name for Other 2"
-          >
+          <span id="fl2" class="note" aria-hidden="true"></span>
         </div>
 
         <p class="note">
-          These names appear on every payslip in this period. Leave a box
-          empty to show "Other payment". Press Save draft to store them.
+          Tip: click the <b>OTHER 1</b> or <b>OTHER 2</b> heading in the table
+          and type a new name, for example "Transport allowance". The names
+          appear on every payslip in this period. Press Save draft to store them.
         </p>
 
         <p class="note">
@@ -217,8 +200,8 @@
                 <th scope="col">Paid days</th>
                 <th scope="col">Gross</th>
                 <th scope="col">Bonus</th>
-                <th scope="col">Other 1</th>
-                <th scope="col">Other 2</th>
+                <th scope="col"><input id="lb1" type="text" maxlength="40" placeholder="Other 1" title="Click to rename" aria-label="Name for Other 1"></th>
+                <th scope="col"><input id="lb2" type="text" maxlength="40" placeholder="Other 2" title="Click to rename" aria-label="Name for Other 2"></th>
                 <th scope="col">Tax</th>
                 <th scope="col">Pension</th>
                 <th scope="col">Fines</th>
@@ -261,8 +244,8 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="common.js?v=4"></script>
-  <script src="admin.js?v=4"></script>
+  <script src="common.js?v=5"></script>
+  <script src="admin.js?v=5"></script>
 
 </body>
 </html>

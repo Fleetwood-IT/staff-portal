@@ -1197,9 +1197,35 @@ nav.row [data-t].on {
   }
 }
 
-/* Names for the two "Other" payment lines */
-#lb1,
-#lb2 {
-  flex: 1 1 240px;
-  min-width: 160px;
+/* Editable "Other 1" / "Other 2" headings in the payroll table */
+.tbl th input {
+  width: 100%;
+  min-width: 118px;
+  min-height: 34px;
+  padding: 6px 9px;
+  border: 1px dashed #8fbba3;
+  border-radius: 8px;
+  background: #fff;
+  color: #284d3e;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+
+.tbl th input::placeholder {
+  color: #284d3e;
+  opacity: 1;
+}
+
+.tbl th input:focus {
+  border-style: solid;
+}
+
+/* Save message next to the payroll buttons */
+#fl2:not(:empty) {
+  padding: 8px 12px;
+  border-radius: 9px;
+  background: #edf7f1;
+  color: #17613f;
 }
