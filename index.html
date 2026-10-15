@@ -1,0 +1,15 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fleetwood Staff Payslips</title><link rel="stylesheet" href="style.css"></head><body>
+<div class="top">Fleetwood Lending Limited<small>Staff payslip portal</small></div>
+<main class="wrap">
+<section id="auth" class="card narrow"><h2>Sign in</h2>
+<label for="em">Email</label><input id="em" type="email" autocomplete="email">
+<label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password">
+<div class="row"><button class="btn p" id="in">Sign in</button></div>
+<div class="row"><button class="btn" id="up">First time? Set my password</button><button class="btn" id="fg">Forgot password</button></div>
+<p id="msg" class="note" aria-live="polite"></p></section>
+<section id="rec" class="card narrow hidden"><h2>Choose a new password</h2><input id="np" type="password" autocomplete="new-password" aria-label="New password"><div class="row"><button class="btn p" id="sv">Save password</button></div><p id="msg2" class="note"></p></section>
+<section id="me" class="hidden"><div class="row"><select id="per" aria-label="Pay period"></select><button class="btn p" id="pr">Print / save as PDF</button><button class="btn" id="out">Sign out</button></div>
+<div class="card pv"><div id="slip"></div><p id="none" class="note"></p></div></section>
+</main><div id="printarea"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="common.js"></script><script src="staff.js"></script></body></html>
