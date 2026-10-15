@@ -1,4 +1,3 @@
-
 /* =========================================================
    FLEETWOOD LENDING LIMITED
    Premium Payroll Portal — Responsive Design
@@ -14,7 +13,7 @@
   --bg: #f4f7f6;
   --card: #ffffff;
   --ink: #172b27;
-  --mut: #71817c;
+  --mut: #5f6f6a;
   --line: #e0e9e5;
 
   --g: #138b55;
@@ -384,21 +383,18 @@ textarea {
 }
 
 /* Main portal navigation */
-#app > .row:first-child {
+#app nav.row {
   gap: 9px;
-  margin: 0 0 24px;
-  padding: 12px;
-  border: 1px solid rgba(216, 230, 223, .9);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, .82);
-  box-shadow: var(--shadow-sm);
+  margin: 18px 0 4px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
 }
 
-#app > .row:first-child .btn {
+#app nav.row .btn {
   padding-inline: 20px;
 }
 
-#app > .row:first-child #out {
+#app nav.row #out {
   margin-left: auto;
 }
 
@@ -780,11 +776,11 @@ details[open] summary {
     padding-top: 22px;
   }
 
-  #app > .row:first-child {
+  #app nav.row {
     gap: 8px;
   }
 
-  #app > .row:first-child .btn {
+  #app nav.row .btn {
     padding-inline: 14px;
   }
 
@@ -871,7 +867,7 @@ details[open] summary {
     padding: 10px 13px;
   }
 
-  #app > .row:first-child {
+  #app nav.row {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
@@ -879,14 +875,14 @@ details[open] summary {
     border-radius: 14px;
   }
 
-  #app > .row:first-child .btn {
+  #app nav.row .btn {
     width: 100%;
     min-width: 0;
     padding: 10px 8px;
     font-size: 12px;
   }
 
-  #app > .row:first-child #out {
+  #app nav.row #out {
     margin-left: 0;
   }
 
@@ -1025,5 +1021,201 @@ details[open] summary {
   .ps * {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+  }
+}
+
+
+/* =========================================================
+   ADDED: styles for the newer index.html / admin.html markup
+   ========================================================= */
+
+/* Header with brand mark (staff page) */
+.top-inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: min(100%, 1400px);
+  margin: 0 auto;
+}
+
+.brand-mark {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), #8fd96a);
+  color: var(--navy);
+  font-size: 24px;
+  font-weight: 900;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .18);
+}
+
+.brand-copy strong {
+  display: block;
+  font-size: clamp(17px, 2vw, 21px);
+  line-height: 1.25;
+}
+
+.brand-copy small {
+  margin-top: 2px;
+}
+
+/* Small green labels above headings */
+.section-kicker {
+  margin: 0 0 6px;
+  color: var(--g-dark);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+}
+
+.card .section-kicker + h2 {
+  margin-top: 0;
+}
+
+.narrow .note {
+  margin-top: 0;
+  margin-bottom: 14px;
+}
+
+/* Staff dashboard heading */
+.portal-heading {
+  margin: 0 0 20px;
+}
+
+.portal-heading h2 {
+  margin: 0 0 4px;
+  color: var(--navy);
+  font-size: clamp(22px, 3vw, 28px);
+  font-weight: 800;
+  letter-spacing: -.5px;
+}
+
+.portal-heading .note {
+  margin: 0;
+}
+
+/* Pay period + buttons bar */
+.portal-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  padding: clamp(14px, 2vw, 20px);
+}
+
+.toolbar-label {
+  flex: 1 1 220px;
+  max-width: 380px;
+}
+
+.toolbar-label label {
+  margin-top: 0;
+}
+
+.toolbar-label select {
+  width: 100%;
+}
+
+.toolbar-actions {
+  margin: 0;
+}
+
+/* Sign-in helper buttons */
+.auth-actions {
+  margin-top: 0;
+}
+
+.auth-actions .btn {
+  flex: 1 1 auto;
+}
+
+/* "Your conversations" heading */
+.conversation-heading {
+  margin-top: 30px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+.conversation-heading h3 {
+  margin-bottom: 2px;
+}
+
+.conversation-heading .note {
+  margin: 0 0 6px;
+}
+
+/* Admin tabs: show which one is open */
+nav.row [data-t]:not(.on) {
+  background: #fff;
+  border-color: #dce7e1;
+  color: var(--navy);
+  box-shadow: none;
+}
+
+nav.row [data-t].on {
+  background: linear-gradient(135deg, #15985c, #087344);
+  border-color: var(--g);
+  color: #fff;
+}
+
+/* Delete staff */
+.btn.danger {
+  border-color: #efc6c6;
+  background: #fff;
+  color: #a12f2f;
+}
+
+.btn.danger:hover {
+  border-color: #d98c8c;
+  background: #fff1f1;
+}
+
+.tbl td.act {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Phones: payslip shrinks to fit the screen instead of scrolling sideways.
+   Screen only, so printing is unchanged. */
+@media screen and (max-width: 600px) {
+  .pv {
+    padding: 4px;
+  }
+
+  .ps {
+    min-width: 0;
+    font-size: 12px;
+  }
+
+  .lg {
+    width: 100px;
+  }
+
+  .co {
+    font-size: 12px;
+  }
+
+  .ps td,
+  .ps th {
+    padding: 3px 4px;
+  }
+
+  .brand-mark {
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+  }
+
+  .toolbar-label {
+    max-width: none;
+  }
+
+  .toolbar-actions .btn {
+    flex: 1 1 auto;
   }
 }

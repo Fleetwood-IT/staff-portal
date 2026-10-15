@@ -1,4 +1,3 @@
-
 let staff = [], pay = {}, cs = [];
 
 const K = ['paid_days', 'gross', 'bonus', 'other1', 'other2', 'tax', 'pension', 'fines'];
@@ -65,6 +64,10 @@ document.querySelectorAll('[data-t]').forEach(b => {
       $('tab-' + t).classList.toggle('hidden', b.dataset.t !== t)
     );
 
+    document.querySelectorAll('[data-t]').forEach(x =>
+      x.classList.toggle('on', x === b)
+    );
+
     if (b.dataset.t === 'p') loadPay();
     if (b.dataset.t === 'c') loadC();
   };
@@ -92,6 +95,9 @@ async function loadStaff() {
       </td>
       <td>
         <input data-k="active" type="checkbox"${s.active ? ' checked' : ''}>
+      </td>
+      <td class="act">
+        <button class="btn danger" type="button" data-del="${i}">Delete</button>
       </td>
     </tr>
   `).join('');
@@ -138,6 +144,42 @@ $('st').onchange = async e => {
 
   s[k] = v;
   flash('Saved');
+};
+
+$('st').onclick = async e => {
+  const b = e.target.closest('[data-del]');
+  if (!b) return;
+
+  const s = staff[b.dataset.del];
+  if (!s) return;
+
+  if (!confirm(
+    'Permanently delete ' + s.name + '?\n\n' +
+    'Their payslips and complaints will be deleted too, and this cannot be undone.\n\n' +
+    'If they have only left the company, press Cancel and untick Active instead.'
+  )) return;
+
+  b.disabled = true;
+
+  const { data, error } = await sb.from('staff')
+    .delete()
+    .eq('id', s.id)
+    .select();
+
+  if (error) {
+    b.disabled = false;
+    return flash('Could not delete: ' + error.message);
+  }
+
+  if (!data || !data.length) {
+    b.disabled = false;
+    return flash('Nothing was deleted. Check that you are signed in as administrator.');
+  }
+
+  flash(s.name + ' deleted.');
+  await loadStaff();
+  await loadPay();
+  loadC();
 };
 
 $('ab').onclick = async () => {
