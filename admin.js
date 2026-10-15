@@ -58,26 +58,38 @@ const setPub=async v=>{const{error}=await sb.from('payslips').update({published:
 $('pub').onclick=()=>confirm('Publish ALL saved payslips for this period to staff?')&&setPub(true);
 $('unp').onclick=()=>confirm('Hide ALL payslips for this period from staff?')&&setPub(false);
 
-/* ---------- Complaints ---------- */
-const dt=d=>new Date(d).toLocaleDateString('en-GB');
+/* ---------- Complaints (conversations) ---------- */
+const dt=d=>{const x=new Date(d);return x.toLocaleDateString('en-GB')+' '+x.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})};
+const bub=(cls,who,d,t)=>`<div class="b ${cls}"><div class="bh">${who} &middot; ${dt(d)}</div>${esc(t)}</div>`;
+const SYS={resolved:'You marked this as resolved',reopened:'You reopened this complaint',closed_yes:'Staff closed this: satisfied',closed_no:'Staff closed this: not satisfied'};
+const sysl=m=>`<div class="sys">${SYS[m.kind]||''} &middot; ${dt(m.created_at)}${m.body?`<br>${esc(m.body)}`:''}</div>`;
+const msgs=c=>(c.complaint_messages||[]).slice().sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
+const needs=c=>{const m=msgs(c);return c.status==='open'&&(m.length?m[m.length-1].sender:'staff')==='staff'};
+const tag=c=>c.status==='closed'?(c.satisfied?'<span class="tag yes">Closed &middot; satisfied</span>':'<span class="tag no">Closed &middot; not satisfied</span>'):c.status==='resolved'?'<span class="tag aw">Awaiting staff feedback</span>':needs(c)?'<span class="tag op">Needs reply</span>':'<span class="tag aw">Waiting for staff</span>';
+function cardC(c){
+ const th=bub('them',esc(c.staff?c.staff.name:'Staff'),c.created_at,c.message)+msgs(c).map(m=>m.kind==='msg'?bub(m.sender==='admin'?'me':'them',m.sender==='admin'?'You':esc(c.staff?c.staff.name:'Staff'),m.created_at,m.body):sysl(m)).join('');
+ const act=c.status==='closed'
+  ?`<textarea rows="2" maxlength="1000" placeholder="Reason for reopening (optional)" aria-label="Reopen note"></textarea><div class="row"><button class="btn" data-act="reopen" data-id="${c.id}">Reopen</button><span class="note tm" aria-live="polite"></span></div>`
+  :`<textarea rows="2" maxlength="1000" placeholder="Write a reply" aria-label="Reply"></textarea><div class="row"><button class="btn p" data-act="reply" data-id="${c.id}">Send reply</button><button class="btn" data-act="resolve" data-id="${c.id}">Mark resolved</button><span class="note tm" aria-live="polite"></span></div>`;
+ return `<div class="cmt"><div><b>${esc(c.staff?c.staff.name:'')}</b> <span class="note">${esc(c.staff?c.staff.staff_no:'')} &middot; ${esc(c.period)}</span> ${tag(c)}</div><div class="thread">${th}</div>${act}</div>`}
 function drawC(){const f=$('cf').value;
- const list=cs.map((c,i)=>[c,i]).filter(([c])=>f==='all'||c.status===f);
- $('ct').innerHTML=list.length?list.map(([c,i])=>`<tr data-i="${i}"><td>${dt(c.created_at)}</td><td>${esc(c.staff?c.staff.name:'')}<br><span class="note">${esc(c.staff?c.staff.staff_no:'')}</span></td><td>${esc(c.period)}</td><td class="msgc">${esc(c.message)}</td><td><textarea rows="3" aria-label="Reply">${esc(c.reply)}</textarea></td><td><select aria-label="Status"><option value="open"${c.status==='open'?' selected':''}>Open</option><option value="resolved"${c.status==='resolved'?' selected':''}>Resolved</option></select></td><td><button class="btn p" data-save="1">Save</button></td></tr>`).join(''):'<tr><td colspan="7" class="note">No complaints.</td></tr>'}
+ const list=cs.filter(c=>f==='all'||(f==='needs'&&needs(c))||(f==='resolved'&&c.status==='resolved')||(f==='closed'&&c.status==='closed'));
+ $('ct').innerHTML=list.length?list.map(cardC).join(''):'<p class="note">No complaints here.</p>'}
 async function loadC(){
- const{data,error}=await sb.from('complaints').select('*,staff(name,staff_no)').order('created_at',{ascending:false});
+ const{data,error}=await sb.from('complaints').select('*,staff(name,staff_no),complaint_messages(*)').order('updated_at',{ascending:false});
  if(error)return flash(error.message);
- cs=data||[];const open=cs.filter(c=>c.status!=='resolved').length;
- $('tc').textContent='Complaints'+(open?` (${open})`:'');drawC()}
+ cs=data||[];const n=cs.filter(needs).length;
+ $('tc').textContent='Complaints'+(n?` (${n})`:'');drawC()}
 $('cf').onchange=drawC;
 $('cr').onclick=loadC;
-$('ct').onclick=async e=>{const b=e.target.closest('[data-save]');if(!b)return;
- const tr=b.closest('tr'),c=cs[tr.dataset.i],reply=tr.querySelector('textarea').value.trim(),status=tr.querySelector('select').value;
+$('ct').onclick=async e=>{const b=e.target.closest('[data-act]');if(!b)return;
+ const box=b.closest('.cmt'),tm=t=>{b.parentElement.querySelector('.tm').textContent=t};
+ const act=b.dataset.act,t=box.querySelector('textarea').value.trim();
+ if(act==='reply'&&!t)return tm('Type a reply first.');
+ const kind=act==='resolve'?'resolved':act==='reopen'?'reopened':'msg';
  b.disabled=true;
- const{data,error}=await sb.from('complaints').update({reply:reply||null,status,replied_at:reply?new Date().toISOString():null}).eq('id',c.id).select();
+ const{error}=await sb.from('complaint_messages').insert({complaint_id:b.dataset.id,sender:'admin',kind,body:t});
  b.disabled=false;
- if(error)return flash('Could not save: '+error.message);
- if(!data||!data.length)return flash('NOT saved: the database refused the change. Run the fix SQL from the chat, then try again.');
- c.reply=data[0].reply;c.status=data[0].status;
- const open=cs.filter(x=>x.status!=='resolved').length;$('tc').textContent='Complaints'+(open?` (${open})`:'');
- flash('Reply saved. The staff member will see it on their page.')};
+ if(error)return tm('Could not save: '+error.message);
+ flash('Saved');await loadC()};
 boot();

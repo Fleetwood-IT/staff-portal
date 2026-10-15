@@ -16,14 +16,49 @@ $('out').onclick=()=>sb.auth.signOut();
 $('per').onchange=()=>draw();
 $('pr').onclick=()=>{$('printarea').innerHTML=$('slip').innerHTML;window.print()};
 function draw(){const r=rows[+$('per').value||0];$('slip').innerHTML=r?slip(r.staff,r):''}
+
+/* ---------- Complaint conversations ---------- */
+const dt=d=>{const x=new Date(d);return x.toLocaleDateString('en-GB')+' '+x.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})};
+const bub=(cls,who,d,t)=>`<div class="b ${cls}"><div class="bh">${who} &middot; ${dt(d)}</div>${esc(t)}</div>`;
+const SYS={resolved:'Payroll marked this as resolved',reopened:'Payroll reopened this complaint',closed_yes:'You closed this complaint: satisfied',closed_no:'You closed this complaint: not satisfied'};
+const sysl=m=>`<div class="sys">${SYS[m.kind]||''} &middot; ${dt(m.created_at)}${m.body?`<br>${esc(m.body)}`:''}</div>`;
+const tag=c=>c.status==='closed'?(c.satisfied?'<span class="tag yes">Closed &middot; satisfied</span>':'<span class="tag no">Closed &middot; not satisfied</span>'):c.status==='resolved'?'<span class="tag aw">Awaiting your feedback</span>':'<span class="tag op">Open</span>';
+function card(c){
+ const ms=(c.complaint_messages||[]).slice().sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
+ const th=bub('me','You',c.created_at,c.message)+ms.map(m=>m.kind==='msg'?bub(m.sender==='staff'?'me':'them',m.sender==='staff'?'You':'Payroll',m.created_at,m.body):sysl(m)).join('');
+ const res=c.status==='resolved';
+ const act=c.status==='closed'?(c.satisfied===false?'<p class="note">You said you were not satisfied. Payroll will review this and may reopen it. You can also send a new message above.</p>':''):
+ `<textarea data-r rows="2" maxlength="1000" placeholder="Write a reply" aria-label="Reply"></textarea>
+<div class="row"><button class="btn p" data-act="reply" data-id="${c.id}">Send reply</button><span class="note tm" aria-live="polite"></span></div>
+<details${res?' open':''}><summary>${res?'Payroll says this is resolved. Are you satisfied?':'Close this complaint'}</summary>
+<div class="row"><label class="opt"><input type="radio" name="s${c.id}" value="yes"> Satisfied</label><label class="opt"><input type="radio" name="s${c.id}" value="no"> Not satisfied</label></div>
+<textarea data-cr rows="2" maxlength="1000" placeholder="Your remark (optional)" aria-label="Closing remark"></textarea>
+<div class="row"><button class="btn" data-act="close" data-id="${c.id}">Close complaint</button><span class="note tm" aria-live="polite"></span></div></details>`;
+ return `<div class="cmt"><div class="note">${esc(c.period)} &middot; started ${dt(c.created_at)} ${tag(c)}</div><div class="thread">${th}</div>${act}</div>`}
 async function loadC(){
- const{data}=await sb.from('complaints').select('*').eq('staff_id',me.id).order('created_at',{ascending:false});
+ const{data}=await sb.from('complaints').select('*,complaint_messages(*)').eq('staff_id',me.id).order('updated_at',{ascending:false});
  const l=data||[];
- $('cl').innerHTML=l.length?l.map(c=>`<div class="cmt"><div class="note">${new Date(c.created_at).toLocaleDateString('en-GB')} &middot; ${esc(c.period)} &middot; <b>${c.status==='resolved'?'Resolved':'Open'}</b></div><p>${esc(c.message)}</p>${c.reply?`<p class="rep"><b>Payroll reply:</b> ${esc(c.reply)}</p>`:''}</div>`).join(''):'<p class="note">No messages yet.</p>'}
+ $('cl').innerHTML=l.length?l.map(card).join(''):'<p class="note">No messages yet.</p>'}
 $('cs').onclick=async()=>{if(!me)return;const t=$('cmsg').value.trim();if(!t)return cn('Type your message first.');
  const{error}=await sb.from('complaints').insert({staff_id:me.id,period:$('cper').value||'General',message:t});
  if(error)return cn('Could not send. Please try again.');
- $('cmsg').value='';cn('Sent. Payroll will reply here.');loadC()};
+ $('cmsg').value='';cn('Sent. Payroll will reply below.');loadC()};
+$('cl').onclick=async e=>{const b=e.target.closest('[data-act]');if(!b||!me)return;
+ const box=b.closest('.cmt'),tm=t=>{b.parentElement.querySelector('.tm').textContent=t};
+ if(b.dataset.act==='reply'){
+  const t=box.querySelector('[data-r]').value.trim();if(!t)return tm('Type a reply first.');
+  b.disabled=true;
+  const{error}=await sb.from('complaint_messages').insert({complaint_id:b.dataset.id,sender:'staff',kind:'msg',body:t});
+  b.disabled=false;if(error)return tm('Could not send. Please try again.');
+  return loadC()}
+ if(b.dataset.act==='close'){
+  const r=box.querySelector('input[type=radio]:checked');if(!r)return tm('Choose Satisfied or Not satisfied first.');
+  if(!confirm('Close this complaint? You will not be able to reply after closing.'))return;
+  b.disabled=true;
+  const{error}=await sb.from('complaint_messages').insert({complaint_id:b.dataset.id,sender:'staff',kind:r.value==='yes'?'closed_yes':'closed_no',body:box.querySelector('[data-cr]').value.trim()});
+  b.disabled=false;if(error)return tm('Could not close. Please try again.');
+  return loadC()}};
+
 async function load(){show('me');
  const{data:{user}}=await sb.auth.getUser();
  me=null;

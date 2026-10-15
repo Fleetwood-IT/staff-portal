@@ -15,9 +15,9 @@
 <p class="note">Payslips stay hidden from staff until you press Publish. The period text appears on the payslip, e.g. "August 2026 2nd Semester". Changing the period text loads that period automatically.</p>
 <div class="tw"><table class="tbl"><thead><tr><th>Name</th><th>Paid days</th><th>Gross</th><th>Bonus</th><th>Other 1</th><th>Other 2</th><th>Tax</th><th>Pension</th><th>Fines</th><th>Payable</th><th>Status</th></tr></thead><tbody id="pt"></tbody></table></div></div>
 <div id="tab-c" class="card hidden"><h2>Complaints</h2>
-<div class="row"><select id="cf" aria-label="Filter"><option value="all">All</option><option value="open">Open</option><option value="resolved">Resolved</option></select><button class="btn" id="cr">Refresh</button></div>
-<p class="note">Type a reply, set the status, then press Save. Staff see your reply on their page.</p>
-<div class="tw"><table class="tbl"><thead><tr><th>Date</th><th>Staff</th><th>About</th><th>Message</th><th>Your reply</th><th>Status</th><th></th></tr></thead><tbody id="ct"></tbody></table></div></div>
+<div class="row"><select id="cf" aria-label="Filter"><option value="all">All</option><option value="needs">Needs reply</option><option value="resolved">Awaiting staff feedback</option><option value="closed">Closed</option></select><button class="btn" id="cr">Refresh</button></div>
+<p class="note">Reply to keep the conversation going. Press Mark resolved when you think it is dealt with: the staff member then says whether they are satisfied, which closes it. You can reopen a closed complaint.</p>
+<div id="ct"></div></div>
 </section></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="common.js"></script><script src="admin.js"></script></body></html>
