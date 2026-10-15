@@ -5,15 +5,19 @@
 <label for="em">Email</label><input id="em" type="email"><label for="pw">Password</label><input id="pw" type="password">
 <div class="row"><button class="btn p" id="in">Sign in</button></div><p id="msg" class="note" aria-live="polite"></p></section>
 <section id="app" class="hidden">
-<div class="row"><button class="btn p" data-t="s">Staff</button><button class="btn p" data-t="p">Payroll</button><button class="btn" id="out">Sign out</button><span id="fl" class="note" aria-live="polite"></span></div>
+<div class="row"><button class="btn p" data-t="s">Staff</button><button class="btn p" data-t="p">Payroll</button><button class="btn p" data-t="c" id="tc">Complaints</button><button class="btn" id="out">Sign out</button><span id="fl" class="note" aria-live="polite"></span></div>
 <div id="tab-s" class="card"><h2>Staff</h2>
 <div class="row"><input id="an" placeholder="Full name" aria-label="Full name"><select id="ag" aria-label="Gender"><option value="">Gender</option><option>MALE</option><option>FEMALE</option></select><input id="ae" type="email" placeholder="Personal email" aria-label="Email"><button class="btn p" id="ab">Add staff</button></div>
 <p class="note">Changes save automatically. Untick Active when someone leaves: they lose access at once.</p>
 <div class="tw"><table class="tbl"><thead><tr><th>ID</th><th>Name</th><th>Gender</th><th>Email</th><th>Active</th></tr></thead><tbody id="st"></tbody></table></div></div>
 <div id="tab-p" class="card hidden"><h2>Monthly payroll</h2>
 <div class="row"><input id="period" value="October 2026 1st Semester" aria-label="Pay period" style="width:280px"><button class="btn" id="ld">Load</button><button class="btn" id="sv">Save draft</button><button class="btn p" id="pub">Publish</button><button class="btn" id="unp">Unpublish</button></div>
-<p class="note">Payslips stay hidden from staff until you press Publish. The period text appears on the payslip, e.g. "August 2026 2nd Semester".</p>
+<p class="note">Payslips stay hidden from staff until you press Publish. The period text appears on the payslip, e.g. "August 2026 2nd Semester". Changing the period text loads that period automatically.</p>
 <div class="tw"><table class="tbl"><thead><tr><th>Name</th><th>Paid days</th><th>Gross</th><th>Bonus</th><th>Other 1</th><th>Other 2</th><th>Tax</th><th>Pension</th><th>Fines</th><th>Payable</th><th>Status</th></tr></thead><tbody id="pt"></tbody></table></div></div>
+<div id="tab-c" class="card hidden"><h2>Complaints</h2>
+<div class="row"><select id="cf" aria-label="Filter"><option value="all">All</option><option value="open">Open</option><option value="resolved">Resolved</option></select><button class="btn" id="cr">Refresh</button></div>
+<p class="note">Type a reply, set the status, then press Save. Staff see your reply on their page.</p>
+<div class="tw"><table class="tbl"><thead><tr><th>Date</th><th>Staff</th><th>About</th><th>Message</th><th>Your reply</th><th>Status</th><th></th></tr></thead><tbody id="ct"></tbody></table></div></div>
 </section></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="common.js"></script><script src="admin.js"></script></body></html>
